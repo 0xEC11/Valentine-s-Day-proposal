@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine, Tee Tee?</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Lora:wght@400;500;600&display=swap');
+
+        :root {
+            --bg-start: #2f0f35;
+            --bg-mid:   #4a1e52;
+            --bg-end:   #6b3a7a;
+            --accent:   #a855f7;
+            --accent-dark: #7e22ce;
+            --text-light: #f8f0ff;
+            --text-soft:  #dcc8f5;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-mid), var(--bg-end));
+            color: var(--text-light);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            background: rgba(30, 15, 40, 0.35);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 3.5rem 2.5rem;
+            max-width: 520px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.58);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin: 0 0 1.8rem;
+            letter-spacing: -0.5px;
+            line-height: 1.15;
+            color: #fff;
+            text-shadow: 0 4px 20px rgba(168, 85, 247, 0.38);
+        }
+
+        .subtitle {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.4rem;
+            color: var(--accent);
+            margin: -1rem 0 2.5rem;
+            opacity: 0.93;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        button {
+            padding: 0.9rem 2.8rem;
+            font-size: 1.3rem;
+            font-family: 'Lora', serif;
+            font-weight: 500;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: none;
+        }
+
+        #yes-btn {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.42);
+        }
+
+        #yes-btn:hover {
+            background: var(--accent-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(126, 34, 206, 0.52);
+        }
+
+        #no-btn {
+            background: transparent;
+            color: var(--text-soft);
+            border: 1.5px solid var(--text-soft);
+        }
+
+        #no-btn:hover {
+            background: rgba(255, 255, 255, 0.09);
+            color: white;
+            border-color: white;
+        }
+
+        #response {
+            font-size: 1.45rem;
+            line-height: 1.7;
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
+            color: var(--text-light);
+            z-index: 5;
+        }
+
+        #response.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Floating petals */
+        .petal {
+            position: absolute;
+            width: 20px;
+            height: 10px;
+            background: linear-gradient(to bottom, #e5d5ff, #c084fc 30%, #a855f7);
+            border-radius: 50% 0 50% 50%;
+            opacity: 0.38;
+            pointer-events: none;
+            transform: rotate(45deg);
+            animation: fall linear infinite;
+            box-shadow: 0 2px 8px rgba(168, 85, 247, 0.25);
+            z-index: 1;
+        }
+
+        .petal:nth-child(odd) {
+            background: linear-gradient(to bottom, #ded0ff, #b794f4 30%, #7e22ce);
+            animation-duration: 18s;
+            animation-delay: -5s;
+        }
+
+        .petal::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: inherit;
+            border-radius: inherit;
+            transform: scale(0.8) translate(4px, -4px);
+            opacity: 0.7;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% {
+                transform: translateY(110vh) rotate(360deg) translateX(30vw);
+                opacity: 0;
+            }
+        }
+
+        /* Sparkles */
+        .sparkle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #f3e8ff;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #e0d4ff;
+            animation: sparkle-fall 6s linear infinite;
+            opacity: 0;
+            z-index: 3;
+        }
+
+        @keyframes sparkle-fall {
+            0%   { transform: translateY(-50vh) rotate(0deg); opacity: 0; }
+            20%  { opacity: 0.9; }
+            100% { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ────────────────────────────────────────────────
+           CONFETTI – appears only on Yes, in front
+        ──────────────────────────────────────────────── */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 3px;
+            opacity: 0.9;
+            pointer-events: none;
+            z-index: 100;                    /* way in front of everything */
+            animation: confetti-fall 3.5s ease-out forwards;
+            transform-origin: center;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-120vh) rotate(0deg) scale(1);
+                opacity: 0.9;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(120vh) rotate(720deg) scale(0.6);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 2.5rem 1.8rem; }
+            h1 { font-size: 2.6rem; }
+            .subtitle { font-size: 2rem; }
+            button { padding: 0.8rem 2.2rem; font-size: 1.15rem; }
+            #response { font-size: 1.3rem; }
+            .petal { width: 16px; height: 8px; }
+            .confetti { width: 8px; height: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="petal" style="left: 10%; animation-duration: 22s;"></div>
+    <div class="petal" style="left: 25%; animation-duration: 26s;"></div>
+    <div class="petal" style="left: 40%; animation-duration: 19s;"></div>
+    <div class="petal" style="left: 55%; animation-duration: 24s;"></div>
+    <div class="petal" style="left: 70%; animation-duration: 21s;"></div>
+    <div class="petal" style="left: 85%; animation-duration: 28s;"></div>
+
+    <div class="container">
+        <h1>Will you be my Valentine,<br>Tee Tee?</h1>
+        <div class="subtitle">Forever starts with us</div>
+
+        <div class="buttons" id="btn-group">
+            <button id="yes-btn">Yes</button>
+            <button id="no-btn">No</button>
+        </div>
+
+        <div id="response"></div>
+    </div>
+
+    <script>
+        // Generate more petals dynamically
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            petal.style.left = Math.random() * 100 + '%';
+            petal.style.animationDuration = (Math.random() * 12 + 16) + 's';
+            petal.style.animationDelay = Math.random() * 10 + 's';
+            petal.style.opacity = Math.random() * 0.3 + 0.2;
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), 30000);
+        }
+
+        for (let i = 0; i < 8; i++) createPetal();
+        setInterval(createPetal, 4000);
+
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const btnGroup = document.getElementById('btn-group');
+        const response = document.getElementById('response');
+
+        noBtn.addEventListener('mouseover', () => {
+            const x = (Math.random() - 0.5) * window.innerWidth * 0.25;
+            const y = (Math.random() - 0.5) * window.innerHeight * 0.25;
+            noBtn.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+        yesBtn.addEventListener('click', () => {
+            btnGroup.style.opacity = '0';
+            btnGroup.style.transform = 'scale(0.95)';
+            setTimeout(() => btnGroup.style.display = 'none', 600);
+
+            response.innerHTML = `
+                My heart has been yours for longer than words can say.<br><br>
+                Thank you for choosing us, Tee Tee.<br>
+                I can’t wait to write every next chapter with you.<br><br>
+                I love you — endlessly.
+            `;
+            response.classList.add('show');
+
+            // Existing sparkles
+            for (let i = 0; i < 60; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.classList.add('sparkle');
+                sparkle.style.left = Math.random() * 100 + 'vw';
+                sparkle.style.top = Math.random() * 40 + 'vh';
+                sparkle.style.animationDuration = (Math.random() * 4 + 3) + 's';
+                sparkle.style.animationDelay = Math.random() * 1.2 + 's';
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 8000);
+            }
+
+            // New: Confetti burst – short celebration pop
+            const colors = ['#a855f7', '#c084fc', '#d4bbff', '#e0d4ff', '#f3e8ff', '#ff9ede', '#e5d5ff'];
+            for (let i = 0; i < 120; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10vh';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+                confetti.style.animationDelay = Math.random() * 0.8 + 's';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.width = (Math.random() * 8 + 6) + 'px';
+                confetti.style.height = confetti.style.width;
+                document.body.appendChild(confetti);
+
+                // Clean up after animation
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        });
+
+        noBtn.addEventListener('click', () => {
+            btnGroup.style.opacity = '0';
+            btnGroup.style.transform = 'scale(0.95)';
+            setTimeout(() => btnGroup.style.display = 'none', 600);
+
+            response.innerHTML = "I know you meant to pick yes, don't be shy.<br>I love you too. 💕";
+            response.classList.add('show');
+        });
+    </script>
+
+</body>
+</html>
